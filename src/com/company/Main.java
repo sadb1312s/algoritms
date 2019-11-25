@@ -47,7 +47,10 @@ public class Main {
         System.out.println(btree.propertiesCheck());
         btree.remove(68);
         btree.print2();
-
+        btree.remove(1);
+        btree.print2();
+        btree.remove(39);
+        btree.print2();
 
 
 
@@ -1953,6 +1956,10 @@ class BTree2 {
         }
     }
 
+    private void replace(int whatReplace, int changingFor){
+        keys.set(keys.indexOf(whatReplace),changingFor);
+    }
+
     private void removeCase4() {
         System.out.println("remove case 4");
         for(Integer k : keys)
@@ -1964,20 +1971,45 @@ class BTree2 {
 
         int mid = parent.keys.get(parent.keys.size()/2);
         System.out.println("> "+mid);
+        int brotherX;
 
 
+
+        //если хотя бы у одного брата из двух keys.size >= T
         if(lB != null) {
             System.out.println("!!");
             if (lB.keys.size() >= T) {
-                System.out.println("!!!");
-                System.out.println(">> "+mid);
+                System.out.println("!!! 1");
+                brotherX = lB.keys.get(lB.keys.size() - 1);
+                System.out.println(">> "+mid+" "+brotherX);
+
+                parent.replace(mid,brotherX);
+                lB.keys.remove((Integer) brotherX);
+                keys.add(getNewIndex(mid),mid);
+
+                BTree2 newChild = lB.children.get(lB.children.size() - 1);
+                newChild.parent = this;
+                lB.children.remove(newChild);
+                children.add(0,newChild);
 
                 return;
             }
         }else {
             if( rB != null){
                 if(rB.keys.size() >= T){
+                    System.out.println("!!! 2");
 
+                    brotherX = rB.keys.get(0);
+                    System.out.println(">> "+mid+" "+brotherX);
+
+                    parent.replace(mid,brotherX);
+                    rB.keys.remove((Integer) brotherX);
+                    keys.add(getNewIndex(mid),mid);
+
+                    BTree2 newChild = rB.children.get(0);
+                    newChild.parent = this;
+                    rB.children.remove(newChild);
+                    children.add(newChild);
 
                     return;
                 }
@@ -1985,7 +2017,7 @@ class BTree2 {
         }
 
 
-            if(parent.keys.size() == 1){
+        if(parent.keys.size() == 1){
                 parent.children = new ArrayList<>();
 
 
