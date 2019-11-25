@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.spi.AbstractResourceBundleProvider;
-
+//test
 public class Main {
 
     public static void main(String[] args) {
@@ -38,13 +38,21 @@ public class Main {
 
         //int[] x = {65,14,79,89,55,72,22,30,71,13,49,37};
         //int[] x ={10,5,30,1,2,100,26,27,21,23,12,17,120,150,110,105,115,106,113,9,13,20,3,4,15,14,22,24,25};  //вроде все збс
-        int x[] = {39,90,51,6,48,31,68,43,93,95,1,5,32,42,45,49,65,69,75,80,94,96,97,98,4,3,15,10,35/**/}; // <---
+        int x[] = {39,90,51,6,48,31,68,43,93,95,1,5/*,32,42,45,49,65,69,75,80,94,96,97,98,4,3,15,10,35/**/}; // <---
 
 
-        BTree2 Btree = new BTree2(2);
-        Btree.add(x);
-        Btree.print2();
-        System.out.println(Btree.propertiesCheck());
+        BTree2 btree = new BTree2(2);
+        btree.add(x);
+        btree.print2();
+        System.out.println(btree.propertiesCheck());
+        btree.remove(39);
+        btree.print2();
+        btree.remove(43);
+        btree.print2();
+        btree.remove(90);
+        btree.print2();
+
+
 
 
         /*BTree b = new BTree(2);
@@ -88,10 +96,6 @@ public class Main {
         }
 
 }
-
-
-
-
 
 class myBinaryTree{
     Element element;
@@ -1510,7 +1514,15 @@ class BTree2 {
 
 
     public BTree2(int t) {
-        T = t > 1 ? t : 2;
+        if(t < 2){
+            try {
+                throw new Exception("in B-Tree T cannot be less than 2, use binary tree");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else
+            this.T = t;
+
         level = 1;
 
         if(isEmpty) {
@@ -1542,7 +1554,6 @@ class BTree2 {
 
 
 }
-
 
     //insert methods
     private void insert(int x) {
@@ -1786,6 +1797,7 @@ class BTree2 {
         System.out.println("удалить "+x);
         BTree2 removeIn = findForRemove(x);
 
+
         //System.out.println(removeIn);
         if(removeIn != null) {
             if(removeIn.children.size()==0) {
@@ -1803,9 +1815,6 @@ class BTree2 {
 
 
         }
-
-
-
     }
 
     private void removeCase3(Integer x) {
@@ -1835,7 +1844,7 @@ class BTree2 {
             }
             else {
                 if(left.keys.size() == T -1 && right.keys.size() == T -1){
-                    System.out.println("> case 3 "+x);
+                    //System.out.println("> case 3 "+x);
                     left.keys.add(right.keys.get(0));
                     right.keys.remove(right.keys.get(0));
                     children.remove(index+1);
@@ -1947,6 +1956,71 @@ class BTree2 {
         }
     }
 
+    private void removeCase4() {
+        System.out.println("remove case 4");
+        for(Integer k : keys)
+            System.out.print(k+" ");
+        System.out.println();
+
+        BTree2 lB = getLeftBrother();
+        BTree2 rB = getRightBrother();
+
+        int mid = parent.keys.get(parent.keys.size()/2);
+        System.out.println("> "+mid);
+
+        if(parent.keys.size() == 1){
+            parent.children = new ArrayList<>();
+
+
+
+            if(lB != null) {
+                for (Integer x : lB.keys)
+                    parent.insert(x);
+
+                for(BTree2 o : lB.children)
+                    parent.children.add(o);
+            }
+
+            for(Integer k : keys)
+                parent.insert(k);
+            for(BTree2 o : children)
+                parent.children.add(o);
+
+            if(rB != null) {
+                for (Integer x : rB.keys)
+                    parent.insert(x);
+
+                for(BTree2 o : rB.children)
+                    parent.children.add(o);
+            }
+
+            parent.childrenLevelMinus();
+        }
+
+
+
+
+
+
+
+    }
+
+    private BTree2 getRoot(){
+        if(parent==null)
+            return this;
+        else
+            return parent.getRoot();
+    }
+
+    private void childrenLevelMinus(){
+        if(level != 1)
+            level--;
+
+        for(BTree2 o : children)
+            o.childrenLevelMinus();
+
+    }
+
     private void merge(BTree2 brother){
         for(Integer o : brother.keys)
             insert(o);
@@ -1958,7 +2032,6 @@ class BTree2 {
 
     private BTree2 getLeftBrother(){
         int i = parent.children.indexOf(this);
-        System.out.println(">> "+i);
 
         if(i != 0)
             return parent.children.get(i-1);
@@ -1968,7 +2041,6 @@ class BTree2 {
 
     private BTree2 getRightBrother(){
         int i = parent.children.indexOf(this);
-        System.out.println(">>> "+i);
 
         try {
             if (i != parent.children.size())
@@ -1979,6 +2051,15 @@ class BTree2 {
     }
 
     private BTree2 findForRemove(int x){
+
+        if(parent != null && children.size() != 0){
+            if(keys.size() == T - 1) {
+                removeCase4();
+                return getRoot().findForRemove(x);
+            }
+
+        }
+
         if(keys.contains(x))
             return this;
         else {
@@ -1987,7 +2068,8 @@ class BTree2 {
                     return children.get(i).findForRemove(x);
                 if(i == keys.size() - 1)
                     if(x > keys.get(i))
-                        return children.get(i+1).findForRemove(x);
+                        return children.get(i + 1).findForRemove(x);
+
             }
         }
 
@@ -2108,17 +2190,6 @@ class BTree2 {
         }
 
         return newIndex;
-    }
-
-    private boolean isIncludeInRange(int x){
-        //вызывать только в функкции split
-        if(keys.get(0)<x&&x<keys.get(keys.size()-1)){
-            return true;
-        }
-        else {
-            return false;
-        }
-
     }
 
     private boolean isFullChild(){
@@ -2248,185 +2319,4 @@ class BTree2 {
     }
 
 
-}
-
-class BTree {
-    BTree parent;
-    int T;
-    int minSize;
-    int maxSize;
-    int level;
-    boolean isEmpty = true;
-    boolean isLeaf = true;
-
-    ArrayList<Integer> keys;
-    ArrayList<BTree> children;
-
-    //constructors
-    public BTree(int T)  {
-
-        if(T < 2){
-            try {
-                throw new Exception("in BTree T cannot be < 2, use binary tree");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        this.T = T;
-        maxSize = 2*T - 1;
-
-        if(parent == null)
-            minSize = 1;
-
-        else
-            minSize = T - 1;
-
-        keys = new ArrayList<>();
-        children = new ArrayList<>();
-
-
-        if(isEmpty){
-            level = 1;
-            isEmpty =  false;
-        }
-    }
-
-    //add methods
-    public void add(int x){
-        insert(x);
-    }
-
-    public void add(int[] x){
-        for(int o : x)
-            add(o);
-    }
-
-    private void insert(int x) {
-        if(isLeaf){
-            insertCase1(x);
-        }else {
-            insertCase2(x);
-        }
-    }
-
-    private void insertCase1(int x){
-        System.out.println("insertCase1");
-        if(keys.size() < maxSize) {
-            keys.add(getNewIndex(x),x);
-        }
-        else {
-            split(x);
-            isLeaf = false;
-        }
-    }
-
-    private void insertCase2(int x){
-        System.out.println("insertCase2");
-        //перебираем детей и ищем куда засунуть ключ
-
-        int index = 0;
-        for(int i = 0; i < keys.size(); i++){
-            if(x<keys.get(i)){
-                index = i;
-                break;
-            }
-            if(i==keys.size()-1)
-                if(x>keys.get(i)){
-                    index = i+1;
-                    break;
-                }
-        }
-
-        children.get(index).insert(x);
-    }
-
-    //find place for insert
-    private int getNewIndex(int x){
-        int newIndex = keys.size();
-
-        if(!keys.contains(x))
-            for (int i = keys.size() - 1; (i >= 0 && keys.get(i) > x); i--) {
-                newIndex = i;
-            }else{
-            newIndex = keys.indexOf(x);
-        }
-
-        return newIndex;
-    }
-
-    //split cases
-    private void split(int x){
-        if(parent == null)
-            splitCase1(x);
-    }
-
-    private void splitCase1(int x){
-        System.out.println("split case1");
-        int midKey = keys.get(T - 1);
-
-        ArrayList<Integer> l = new ArrayList(keys.subList(0,T-1));
-        ArrayList<Integer> r = new ArrayList(keys.subList(T,maxSize));
-
-        BTree lC = new BTree(T);
-        BTree rC = new BTree(T);
-        lC.keys = l;
-        rC.keys = r;
-        lC.level = rC.level = level;
-        level++;
-
-        keys = new ArrayList<>();
-        keys.add(midKey);
-
-
-        children.add(lC);
-        children.add(rC);
-
-        if(x < midKey)
-            lC.insert(x);
-        else
-            rC.insert(x);
-
-    }
-
-    private ArrayList<BTree> getLeftChildren(){
-        return getChildren(0,T -1);
-
-    }
-
-    private ArrayList<BTree> getChildren(int x1,int x2){
-        return new ArrayList<>();
-    }
-
-    //print
-
-    private static HashMap<Integer,ArrayList<BTree>> nodes;
-    private void printFill(){
-        nodes.get(level).add(this);
-        if(children != null)
-            for(BTree o : children)
-                o.printFill();
-    }
-    void print(){
-        nodes = new HashMap<>();
-
-        for(int i = 1 ; i <= level ; i++){
-            nodes.put(i,new ArrayList<>());
-        }
-        printFill();
-
-        System.out.println("-----print-tree-----");
-        for(int i = level ; i >= 1 ; i--){
-            for(BTree node : nodes.get(i)) {
-                System.out.print("( ");
-                for (Integer o : node.keys) {
-                    System.out.print(o + " ");
-                }
-                System.out.print(" )");
-            }
-            System.out.println();
-        }
-        System.out.println("--------------------");
-
-    }
 }
