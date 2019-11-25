@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.spi.AbstractResourceBundleProvider;
-//test
+//test2
 public class Main {
 
     public static void main(String[] args) {
@@ -45,12 +45,9 @@ public class Main {
         btree.add(x);
         btree.print2();
         System.out.println(btree.propertiesCheck());
-        btree.remove(39);
+        btree.remove(68);
         btree.print2();
-        btree.remove(43);
-        btree.print2();
-        btree.remove(90);
-        btree.print2();
+
 
 
 
@@ -1968,34 +1965,55 @@ class BTree2 {
         int mid = parent.keys.get(parent.keys.size()/2);
         System.out.println("> "+mid);
 
-        if(parent.keys.size() == 1){
-            parent.children = new ArrayList<>();
 
+        if(lB != null) {
+            System.out.println("!!");
+            if (lB.keys.size() >= T) {
+                System.out.println("!!!");
+                System.out.println(">> "+mid);
 
-
-            if(lB != null) {
-                for (Integer x : lB.keys)
-                    parent.insert(x);
-
-                for(BTree2 o : lB.children)
-                    parent.children.add(o);
+                return;
             }
+        }else {
+            if( rB != null){
+                if(rB.keys.size() >= T){
 
-            for(Integer k : keys)
-                parent.insert(k);
-            for(BTree2 o : children)
-                parent.children.add(o);
 
-            if(rB != null) {
-                for (Integer x : rB.keys)
-                    parent.insert(x);
-
-                for(BTree2 o : rB.children)
-                    parent.children.add(o);
+                    return;
+                }
             }
-
-            parent.childrenLevelMinus();
         }
+
+
+            if(parent.keys.size() == 1){
+                parent.children = new ArrayList<>();
+
+
+
+                if(lB != null) {
+                    for (Integer x : lB.keys)
+                        parent.insert(x);
+
+                    for(BTree2 o : lB.children)
+                        parent.children.add(o);
+                }
+
+                for(Integer k : keys)
+                    parent.insert(k);
+                for(BTree2 o : children)
+                    parent.children.add(o);
+
+                if(rB != null) {
+                    for (Integer x : rB.keys)
+                        parent.insert(x);
+
+                    for(BTree2 o : rB.children)
+                        parent.children.add(o);
+                }
+
+                parent.childrenLevelMinus();
+            }
+
 
 
 
