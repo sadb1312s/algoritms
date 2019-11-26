@@ -12,8 +12,31 @@ public class Main {
 
     public static void main(String[] args) {
         //test sets
+        //1
         // x {23,18,51,83,75,57,9,79,87,71,22,30,27,11,21,28,37,63,14,92}
         // xS {63,71,11,9,57,21,14,37,22,23,92,75,30,79,27,51,87,83,28,18}
+        //2
+        //int x[] = {84,8,39,28,85,27,67,12,75,3,95,72,51,59,29,37,94,79,77,52};
+        //int s[] = {72,75,77,85,29,28,51,52,37,8,12,94,95,3,27,39,84,67,59,79};
+        //3
+        //int x[] ={37,94,1,5,56,99,87,6,59,98,85,68,82,53,39,46,41,92,9,16,};
+        //int s[] ={37,87,99,39,46,1,41,59,85,9,53,16,6,92,56,82,94,98,68,5,};
+        //4
+        //int x[] = {44,100,20,64,6,29,2,52,18,42,94,22,32,41,30,54,23,15,61,34};
+        //int s[] = {2,42,54,100,15,6,34,64,41,94,29,30,18,23,61,44,52,22,20,32};
+
+        /*ArrayList<Integer> s2 = new ArrayList<>();
+        for(int l : x)
+            s2.add(l);
+        BTree2 t = new BTree2(2);
+        t.add(x);
+        t.print2();
+        System.out.println(t.propertiesCheck());
+
+        t.remove(s2);*/
+
+
+
 
         randomTest(2,20,100);
 
@@ -1824,8 +1847,10 @@ class BTree2 {
 
     private void removeCase3(Integer x) {
         //System.out.println("удалить не в листе");
+        System.out.println("remove case 3");
         System.out.println();
         int index = keys.indexOf(x);
+        System.out.println(index);
 
         BTree2 left = children.get(index);
 
@@ -1837,32 +1862,39 @@ class BTree2 {
             System.out.println("> cases 1");
             //int prev = left.keys.get(left.keys.size()-1);
             int prev = left.findMax();
+            System.out.println(prev);
             keys.set(index,prev);
             //System.out.println(">> "+prev);
             left.remove(prev);
         }else {
             BTree2 right = children.get(index + 1);
             if(right.keys.size()>=T){
-                //System.out.println("> cases 2");
+                System.out.println("> cases 2");
                 int prev = right.findMin();
+                System.out.println(" min = "+prev);
                 keys.set(index,prev);
                 //System.out.println(">> "+prev);
                 right.remove(prev);
             }
             else {
                 if(left.keys.size() == T -1 && right.keys.size() == T -1){
-                    //System.out.println("> case 3 "+x);
-                    left.keys.add(right.keys.get(0));
-                    right.keys.remove(right.keys.get(0));
-                    children.remove(index+1);
-
+                    System.out.println(left.keys.get(0)+" "+right.keys.get(0));
 
                     keys.remove(x);
-                    left.insert(x);
-                    left.remove(x);
+                    left.keys.add(left.getNewIndex(x),x);
+                    for(int o : right.keys)
+                        left.keys.add(o);
 
-                    BTree2 lB = getLeftBrother();
-                    BTree2 rB = getRightBrother();
+                    for(BTree2 o : right.children){
+                        o.parent = left;
+                        left.children.add(o);
+                    }
+                    children.remove(right);
+
+
+                    left.remove(x);
+                    //BTree2 lB = getLeftBrother();
+                    //BTree2 rB = getRightBrother();
 
 
 
@@ -1884,7 +1916,7 @@ class BTree2 {
         if(children.size() == 0){
             return keys.get(0);
         }else {
-            return children.get(0).findMax();
+            return children.get(0).findMin();
         }
     }
 
@@ -1947,8 +1979,8 @@ class BTree2 {
                    System.out.print(o+" ");
                System.out.println();
 
-               //parent.keys.set(parent.keys.indexOf(k2),k1);
-               parent.keys.set(parent.getNewIndex(k1),k1);
+               parent.keys.set(parent.keys.indexOf(k2),k1);
+               //parent.keys.set(parent.getNewIndex(k1),k1);
 
                insert(k2);
                suitable.keys.remove((Integer)k1);
@@ -2019,10 +2051,13 @@ class BTree2 {
                 lB.children.remove(newChild);
                 children.add(0,newChild);
 
+
+
                 return;
             }
         }else {
             if( rB != null){
+                System.out.println("!");
                 if(rB.keys.size() >= T){
                     System.out.println("!!! 2");
 
@@ -2037,6 +2072,11 @@ class BTree2 {
                     newChild.parent = this;
                     rB.children.remove(newChild);
                     children.add(newChild);
+
+                    System.out.println("dsadasdsa");
+                    getRoot().print2();
+
+                    System.out.println("dsadas");
 
                     return;
                 }
@@ -2098,6 +2138,8 @@ class BTree2 {
 
             getRoot().childrenLevelMinus();
         }
+
+
     }
 
     private BTree2 getRoot(){
@@ -2165,6 +2207,7 @@ class BTree2 {
                     if(x > keys.get(i))
                         return children.get(i + 1).findForRemove(x);
 
+
             }
         }
 
@@ -2178,8 +2221,19 @@ class BTree2 {
             return false;
     }
     //проверка свойств B дерева
-    public boolean propertiesCheck(){
+    public boolean propertiesCheck() {
+        boolean check = propertiesCheck1();
+        check = propertiesCheck2();
 
+        return check;
+    }
+
+    private boolean propertiesCheck2() {
+        return true;
+
+    }
+
+    private boolean propertiesCheck1(){
         boolean check = false;
 
         if(parent == null && keys.size() == 0 && children.size() ==0)
@@ -2311,6 +2365,7 @@ class BTree2 {
     }
 
     //print methods
+
 
 
     static HashMap<Integer,ArrayList<BTree2>> nodes = new HashMap<>();
