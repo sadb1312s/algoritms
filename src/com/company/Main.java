@@ -30,8 +30,11 @@ public class Main {
         //6
         //int x[] = {19,93,85,76,21,63,18,55,82,29,45,48,100,37,81,98,13,92,68,67};
         //int s[] = {13,81,48,93,55,19,98,18,68,76,67,21,92,82,100,45,29,85,63,37};
+        //7
+        //int x[] = {56,39,95,90,31,53,91,45,80,82,72,6,17,70,20,33,28,69,74,47};
+        //int s[] = {80,91,56,45,33,90,17,74,28,95,20,72,53,70,31,39,69,6,47,82};
 
-       /* ArrayList<Integer> s2 = new ArrayList<>();
+        /*ArrayList<Integer> s2 = new ArrayList<>();
         for(int l : s)
             s2.add(l);
         BTree2 t = new BTree2(2);
@@ -41,7 +44,7 @@ public class Main {
 
         t.remove(s2);*/
 
-        randomTest(2,20,100);
+        randomTest(10,100,1000);
 
 
     }
@@ -2114,9 +2117,10 @@ class BTree2 {
                 mid = parent.keys.get(0);
             else {
                 //mid = parent.keys.get(parent.getNewIndex(keys.get(0)));
-                int i = parent.getNewIndex(keys.get(0));
-                if(i == parent.keys.size())
+                int i = parent.getIndexInParentArray(this);
+                if(i != 0)
                     i--;
+
                 mid = parent.keys.get(i);
             }
             System.out.println("!!!!! 1 "+mid);
@@ -2134,16 +2138,23 @@ class BTree2 {
                 children.add(i, newChild);
             }
 
-            //System.out.println("dasdasda!");
-            //getRoot().print2();
-            //System.out.println("das-das-ds-a");
+            System.out.println("dasdasda!");
+            getRoot().print2();
+            System.out.println("das-das-ds-a");
 
         }else {
             if(rB != null && rB.keys.size() <= T -1){
                 if(parent.keys.size() == 1)
                     mid = parent.keys.get(0);
-                else
-                    mid = parent.keys.get(parent.getNewIndex(keys.get(keys.size() - 1)));
+                else {
+                    int i = parent.getIndexInParentArray(this);
+                    //if(i != parent.keys.size() + 1)
+                    //i--;
+
+                    System.out.println(i);
+
+                    mid = parent.keys.get(i);
+                }
                 System.out.println("!!!!! 2 "+mid);
                 keys.add(getNewIndex(mid),mid);
 
