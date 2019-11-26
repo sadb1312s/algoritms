@@ -24,9 +24,15 @@ public class Main {
         //4
         //int x[] = {44,100,20,64,6,29,2,52,18,42,94,22,32,41,30,54,23,15,61,34};
         //int s[] = {2,42,54,100,15,6,34,64,41,94,29,30,18,23,61,44,52,22,20,32};
+        //5
+        //int x[] = {97,61,92,74,54,5,62,4,43,90,89,76,19,98,87,37,82,73,1,2};
+        //int s[] = {4,92,1,5,98,2,76,74,87,54,89,97,82,19,90,61,62,73,37,43};
+        //6
+        //int x[] = {19,93,85,76,21,63,18,55,82,29,45,48,100,37,81,98,13,92,68,67};
+        //int s[] = {13,81,48,93,55,19,98,18,68,76,67,21,92,82,100,45,29,85,63,37};
 
-        /*ArrayList<Integer> s2 = new ArrayList<>();
-        for(int l : x)
+       /* ArrayList<Integer> s2 = new ArrayList<>();
+        for(int l : s)
             s2.add(l);
         BTree2 t = new BTree2(2);
         t.add(x);
@@ -34,9 +40,6 @@ public class Main {
         System.out.println(t.propertiesCheck());
 
         t.remove(s2);*/
-
-
-
 
         randomTest(2,20,100);
 
@@ -2035,12 +2038,24 @@ class BTree2 {
 
 
         //если хотя бы у одного брата из двух keys.size >= T
+        System.out.println(lB+ " "+rB);
         if(lB != null) {
             System.out.println("!!");
+            System.out.println(" l s "+lB.keys.size());
+            System.out.println(lB.keys.get(0));
             if (lB.keys.size() >= T) {
+
+                int i = parent.getIndexInParentArray(this);
+                if(i != 0)
+                    i--;
+
+                mid = parent.keys.get(i);
+
+                System.out.println(i);
+
                 System.out.println("!!! 1");
                 brotherX = lB.keys.get(lB.keys.size() - 1);
-                //System.out.println(">> "+mid+" "+brotherX);
+                System.out.println(">> "+mid+" "+brotherX);
 
                 parent.replace(mid,brotherX);
                 lB.keys.remove((Integer) brotherX);
@@ -2055,13 +2070,23 @@ class BTree2 {
 
                 return;
             }
-        }else {
+        }
+
             if( rB != null){
+                System.out.println(" r s "+rB.keys.size());
                 System.out.println("!");
                 if(rB.keys.size() >= T){
+                    int i = parent.getIndexInParentArray(this);
+                    //if(i != parent.keys.size() + 1)
+                        //i--;
+
+                    System.out.println(i);
+
+                    mid = parent.keys.get(i);
                     System.out.println("!!! 2");
 
                     brotherX = rB.keys.get(0);
+                    System.out.println(">> "+mid+" "+brotherX);
                     //System.out.println(">> "+mid+" "+brotherX);
 
                     parent.replace(mid,brotherX);
@@ -2073,22 +2098,27 @@ class BTree2 {
                     rB.children.remove(newChild);
                     children.add(newChild);
 
-                    System.out.println("dsadasdsa");
+                    System.out.println("dasdasda!");
                     getRoot().print2();
+                    System.out.println("das-das-ds-a");
 
-                    System.out.println("dsadas");
 
                     return;
                 }
             }
-        }
+
 
         //если у убоих keys.size <= T - 1
         if(lB != null && lB.keys.size() <= T - 1){
             if(parent.keys.size() == 1)
                 mid = parent.keys.get(0);
-            else
-                mid = parent.keys.get(parent.getNewIndex(keys.get(0)));
+            else {
+                //mid = parent.keys.get(parent.getNewIndex(keys.get(0)));
+                int i = parent.getNewIndex(keys.get(0));
+                if(i == parent.keys.size())
+                    i--;
+                mid = parent.keys.get(i);
+            }
             System.out.println("!!!!! 1 "+mid);
             keys.add(getNewIndex(mid),mid);
 
@@ -2104,6 +2134,9 @@ class BTree2 {
                 children.add(i, newChild);
             }
 
+            //System.out.println("dasdasda!");
+            //getRoot().print2();
+            //System.out.println("das-das-ds-a");
 
         }else {
             if(rB != null && rB.keys.size() <= T -1){
