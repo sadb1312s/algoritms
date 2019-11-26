@@ -11,70 +11,11 @@ import java.util.spi.AbstractResourceBundleProvider;
 public class Main {
 
     public static void main(String[] args) {
-        // write your code here
+        //test sets
+        // x {23,18,51,83,75,57,9,79,87,71,22,30,27,11,21,28,37,63,14,92}
+        // xS {63,71,11,9,57,21,14,37,22,23,92,75,30,79,27,51,87,83,28,18}
 
-        //{4,7,10,8,9}
-        //{6,1,8,5,2}
-        //{4,9,5,7,1,2,3,8,6,10}
-        //{34,17,23,8,22,39,14,6,11,27,41,29,9,20,1,33,35,12,16,44}
-        //int[] x = {34,17,23,8,22,39,14,6,11,27,41,29,9,20,1,33,35,12,16,44};
-        //int[] x = {10,5,20,3,7,15,25,14,1,4,14,16,24,26};
-
-        /*int[] x = null;
-        try {
-             x = getRandomArray(20,50);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-        //tree.remove(5);
-        //tree.printTree();
-        //tree.remove(7);
-        //tree.printTree();
-        //tree.remove(3);
-        //tree.printTree();
-
-        //BTree2 bTree = new BTree2(2);//3
-
-        //int[] x = {65,14,79,89,55,72,22,30,71,13,49,37};
-        //int[] x ={10,5,30,1,2,100,26,27,21,23,12,17,120,150,110,105,115,106,113,9,13,20,3,4,15,14,22,24,25};  //вроде все збс
-        //int x[] = {39,90,51,6,48,31,68,43,93,95,1,5/*,32,42,45,49,65,69,75,80,94,96,97,98,4,3,15,10,35/**/}; // <---
-        int[] x = {23,18,51,83,75,57,9,79,87,71,22,30,27,11,21,28,37,63,14,92};
-        for(int o : x)
-            System.out.print(o+" ");
-
-        System.out.println();
-
-        //int[] x = getRandomArray(20,100);, 1
-        int[] removE = {63,71,11,9,57,21,14,37,22,23,92,75,30,79,27,51,87,83,28,18};
-
-        ArrayList<Integer> remove = new ArrayList<>();
-        for(int o : removE) // replace removeE to x
-            remove.add((Integer)o);
-        //Collections.shuffle(remove); !
-
-        for(int o : remove)
-            System.out.print(o+" ");
-
-        System.out.println();
-
-        BTree2 btree = new BTree2(2);
-        btree.add(x);
-        btree.print2();
-
-        btree.remove(remove);
-
-
-        System.out.println(btree.propertiesCheck());
-
-
-
-
-        /*BTree b = new BTree(2);
-        b.add(new int[]{39,90,51,6,48});
-        b.print();
-        b.add(31);
-        b.print();*/
+        randomTest(2,20,100);
 
 
     }
@@ -115,7 +56,31 @@ public class Main {
             return arr;
 
         }
+    public static void randomTest(int treeT,int arraySize,int range){
 
+        BTree2 tree = new BTree2(treeT);
+
+        int x[] = getRandomArray(arraySize,range);
+        for(int i : x)
+            System.out.print(i+",");
+
+        ArrayList<Integer> shuffleX = new ArrayList<>();
+        for(int i : x)
+            shuffleX.add(i);
+        System.out.println();
+        Collections.shuffle(shuffleX);
+
+        for(int i : shuffleX)
+            System.out.print(i+",");
+        System.out.println();
+
+        tree.add(x);
+        tree.print2();
+        System.out.println(tree.propertiesCheck());
+
+        tree.remove(shuffleX);
+
+    }
 }
 
 class myBinaryTree{
@@ -1821,10 +1786,20 @@ class BTree2 {
 
         //System.out.println(removeIn);
         if(removeIn != null) {
+            System.out.println(">> "+removeIn.children.size());
             if(removeIn.children.size()==0) {
+                System.out.println("is leaf");
                 BTree2 pR = removeIn.parent;
+                //if node is root with null child
+                if(removeIn == getRoot() && removeIn.keys.contains(x)){
+                    System.out.println("remove case 0");
+                    keys.remove(x);
+                    return;
+                }
+
+
                 //if parent contains 2 children and children is leaf
-                if (pR.children.size() == 2 && pR.children.get(0).isLeafOneLength() && pR.children.get(1).isLeafOneLength())
+                if (pR.children.size() == 2  && pR.children.get(0).isLeafOneLength() && pR.children.get(1).isLeafOneLength())
                     pR.removeCase1(x);
                 else
                     //if node is leaf
@@ -1848,7 +1823,8 @@ class BTree2 {
     }
 
     private void removeCase3(Integer x) {
-        //System.out.println("удалить не в узле");
+        //System.out.println("удалить не в листе");
+        System.out.println();
         int index = keys.indexOf(x);
 
         BTree2 left = children.get(index);
@@ -1913,12 +1889,15 @@ class BTree2 {
     }
 
     private void removeCase1(Integer x){
+        System.out.println("remove case 1");
         BTree2 c1 = children.get(0);
         BTree2 c2 = children.get(1);
         children = new ArrayList<>();
 
         insert(c1.keys.get(0));
         insert(c2.keys.get(0));
+
+        level = 1;
 
         keys.remove(x);
     }
@@ -1997,7 +1976,6 @@ class BTree2 {
                parent.keys.remove((Integer) k1);
                insert(k1);
            }
-
 
            keys.remove(x);
 
@@ -2204,6 +2182,8 @@ class BTree2 {
 
         boolean check = false;
 
+        if(parent == null && keys.size() == 0 && children.size() ==0)
+            return true;
 
         if(minSize<=keys.size()&&keys.size()<=size) {
             check = true;
@@ -2226,11 +2206,6 @@ class BTree2 {
                     break;
             }
         }
-
-
-
-
-
 
         return check;
     }
