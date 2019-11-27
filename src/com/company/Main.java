@@ -33,18 +33,39 @@ public class Main {
         //7
         //int x[] = {56,39,95,90,31,53,91,45,80,82,72,6,17,70,20,33,28,69,74,47};
         //int s[] = {80,91,56,45,33,90,17,74,28,95,20,72,53,70,31,39,69,6,47,82};
+        //8
+        //int x[] = {5,24,15,71,85,76,48,73,45,65,53,67,99,35,49,10,89,83,97,79};
+        //int s[] = {97,76,24,49,53,45,99,73,48,83,67,85,79,15,65,10,35,71,5,89};
+        //9
+        //int x[] = {90,57,82,66,78,70,72,48,28,69,56,41,13,2,23,77,43,27,61,95};
+        //int s[] = {90,48,77,82,23,66,57,28,2,95,61,27,41,56,13,70,69,78,43,72};
+        //10
+        //int x[] = {73,11,58,83,10,98,97,62,77,16,23,93,43,4,32,34,2,95,53,70};
+        //int s[] = {4,11,2,32,23,70,98,10,83,73,16,95,58,97,43,93,34,53,62,77};
 
         /*ArrayList<Integer> s2 = new ArrayList<>();
         for(int l : s)
             s2.add(l);
         BTree2 t = new BTree2(2);
         t.add(x);
+        t.print();
+        System.out.println();
         t.print2();
+
         System.out.println(t.propertiesCheck());
 
         t.remove(s2);*/
 
-        randomTest(10,100,1000);
+        for(int i = 0 ; i < 10000 ; i++)
+            try {
+                System.out.println("=======================================");
+                randomTest(2,20,100);
+            }catch (Exception e){
+                System.out.println("ERRROR "+i);
+                e.printStackTrace();
+                break;
+            }
+
 
 
     }
@@ -92,11 +113,12 @@ public class Main {
         int x[] = getRandomArray(arraySize,range);
         for(int i : x)
             System.out.print(i+",");
+        System.out.println();
 
         ArrayList<Integer> shuffleX = new ArrayList<>();
         for(int i : x)
             shuffleX.add(i);
-        System.out.println();
+
         Collections.shuffle(shuffleX);
 
         for(int i : shuffleX)
@@ -104,7 +126,7 @@ public class Main {
         System.out.println();
 
         tree.add(x);
-        tree.print2();
+        //tree.print2();
         System.out.println(tree.propertiesCheck());
 
         tree.remove(shuffleX);
@@ -1563,6 +1585,7 @@ class BTree2 {
             //System.out.println("Add "+o);
             add(o);
             //print();
+            //System.out.println();
 
         }
 
@@ -1652,7 +1675,8 @@ class BTree2 {
 
         rightTree.keys = right;
         rightTree.children = rightChildren;
-
+        rightTree.level = level;
+        leftTree.level = level;
         //нужно определить в какое поддерево вставлять новый елемент
         //System.out.println("middle "+middle.get(0));
         if(x<middle.get(0))
@@ -1844,9 +1868,9 @@ class BTree2 {
 
     public void remove(ArrayList<Integer> x){
         for(Integer o : x){
-            System.out.println("удалить "+o);
+            //System.out.println("удалить "+o);
             remove(o);
-            print2();
+            //print2();
             System.out.println(propertiesCheck());
         }
     }
@@ -1885,7 +1909,7 @@ class BTree2 {
             else {
                 if(left.keys.size() == T -1 && right.keys.size() == T -1){
                     System.out.println(left.keys.get(0)+" "+right.keys.get(0));
-
+                    System.out.println("> case 3");
                     keys.remove(x);
                     left.keys.add(left.getNewIndex(x),x);
                     for(int o : right.keys)
@@ -1897,14 +1921,32 @@ class BTree2 {
                     }
                     children.remove(right);
 
+                    if(parent == null && keys.size() == 0){
+                        System.out.println("!");
+                        childrenLevelMinus();
+                        if(children.size()== 1) {
+                            BTree2 c = children.get(0);
+                            keys = c.keys;
+                            children = new ArrayList<>();
+                            for(BTree2 t : c.children){
+                                t.parent = this;
+                                children.add(t);
+                            }
+
+                            System.out.println("!dasdsadasdasdsad");
+                            getRoot().print2();
+                            System.out.println("dsadsadsa213123");
+
+                            remove(x);
+                            return;
+
+                        }
+
+                    }
+
+
 
                     left.remove(x);
-                    //BTree2 lB = getLeftBrother();
-                    //BTree2 rB = getRightBrother();
-
-
-
-
                 }
             }
         }
@@ -2267,8 +2309,6 @@ class BTree2 {
     //проверка свойств B дерева
     public boolean propertiesCheck() {
         boolean check = propertiesCheck1();
-        check = propertiesCheck2();
-
         return check;
     }
 
@@ -2409,9 +2449,6 @@ class BTree2 {
     }
 
     //print methods
-
-
-
     static HashMap<Integer,ArrayList<BTree2>> nodes = new HashMap<>();
     public void print2() {
         int size = level;
@@ -2468,6 +2505,18 @@ class BTree2 {
 
     private static void add(int level,BTree2 x){
         nodes.get(level).add(x);
+    }
+
+    public void print(){
+        System.out.print("( "+level+" :");
+        for(int o : keys)
+            System.out.print(o+"  ");
+        System.out.print(")");
+
+        for(BTree2 o : children)
+            o.print();
+
+
     }
 
 
