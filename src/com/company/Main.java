@@ -4,12 +4,14 @@ import javax.swing.text.AsyncBoxView;
 import java.awt.image.renderable.RenderableImage;
 import java.lang.management.ThreadInfo;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.spi.AbstractResourceBundleProvider;
 //test2
 public class Main {
-
+    static int error = 0;
+    static CountDownLatch l = new CountDownLatch(Runtime.getRuntime().availableProcessors());
     public static void main(String[] args) {
         //test sets
         //1
@@ -56,16 +58,40 @@ public class Main {
 
         t.remove(s2);*/
 
-        for(int i = 0 ; i < 10000 ; i++)
-            try {
-                System.out.println("=======================================");
-                randomTest(2,20,100);
-            }catch (Exception e){
-                System.out.println("ERRROR "+i);
-                e.printStackTrace();
-                break;
+
+
+        class testThread extends Thread{
+            @Override
+            public void run() {
+                for(int i = 0 ; i < 1_000_000 ; i++)
+                    try {
+                        //System.out.println("=======================================");
+                        randomTest(32,1000,5000);
+                        System.out.println(getName()+" "+i);
+                    }catch (Exception e){
+                        System.out.println("ERRROR "+i);
+                        e.printStackTrace();
+                        break;
+                    }
+
+                l.countDown();
             }
 
+        }
+
+
+        for(int i = 0 ; i < Runtime.getRuntime().availableProcessors(); i++){
+            testThread t = new testThread();
+            t.start();
+
+        }
+
+        try {
+            l.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Количество ошибок "+error);
 
 
     }
@@ -111,9 +137,9 @@ public class Main {
         BTree2 tree = new BTree2(treeT);
 
         int x[] = getRandomArray(arraySize,range);
-        for(int i : x)
-            System.out.print(i+",");
-        System.out.println();
+        //for(int i : x)
+        //    System.out.print(i+",");
+        //System.out.println();
 
         ArrayList<Integer> shuffleX = new ArrayList<>();
         for(int i : x)
@@ -121,13 +147,13 @@ public class Main {
 
         Collections.shuffle(shuffleX);
 
-        for(int i : shuffleX)
-            System.out.print(i+",");
-        System.out.println();
+        //for(int i : shuffleX)
+        //    System.out.print(i+",");
+        //System.out.println();
 
         tree.add(x);
         //tree.print2();
-        System.out.println(tree.propertiesCheck());
+        //System.out.println(tree.propertiesCheck());
 
         tree.remove(shuffleX);
 
@@ -1586,6 +1612,7 @@ class BTree2 {
             add(o);
             //print();
             //System.out.println();
+            propertiesCheck();
 
         }
 
@@ -1839,13 +1866,13 @@ class BTree2 {
 
         //System.out.println(removeIn);
         if(removeIn != null) {
-            System.out.println(">> "+removeIn.children.size());
+            //System.out.println(">> "+removeIn.children.size());
             if(removeIn.children.size()==0) {
-                System.out.println("is leaf");
+                //System.out.println("is leaf");
                 BTree2 pR = removeIn.parent;
                 //if node is root with null child
                 if(removeIn == getRoot() && removeIn.keys.contains(x)){
-                    System.out.println("remove case 0");
+                    //System.out.println("remove case 0");
                     keys.remove(x);
                     return;
                 }
@@ -1870,17 +1897,28 @@ class BTree2 {
         for(Integer o : x){
             //System.out.println("удалить "+o);
             remove(o);
-            //print2();
-            System.out.println(propertiesCheck());
+            //sprint2();
+            //System.out.println(propertiesCheck());
+            if(!propertiesCheck()) {
+                getRoot().print2();
+                System.out.println("1111111111");
+                System.out.println(propertiesCheck());
+                try {
+                    Thread.sleep(12312312);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
     }
 
     private void removeCase3(Integer x) {
         //System.out.println("удалить не в листе");
-        System.out.println("remove case 3");
-        System.out.println();
+        //System.out.println("remove case 3");
+        //System.out.println();
         int index = keys.indexOf(x);
-        System.out.println(index);
+        //System.out.println(index);
 
         BTree2 left = children.get(index);
 
@@ -1889,27 +1927,27 @@ class BTree2 {
         //System.out.println("T = "+T);
 
         if(left.keys.size()>=T){
-            System.out.println("> cases 1");
+            //System.out.println("> cases 1");
             //int prev = left.keys.get(left.keys.size()-1);
             int prev = left.findMax();
-            System.out.println(prev);
+            //System.out.println(prev);
             keys.set(index,prev);
             //System.out.println(">> "+prev);
             left.remove(prev);
         }else {
             BTree2 right = children.get(index + 1);
             if(right.keys.size()>=T){
-                System.out.println("> cases 2");
+                //System.out.println("> cases 2");
                 int prev = right.findMin();
-                System.out.println(" min = "+prev);
+                //System.out.println(" min = "+prev);
                 keys.set(index,prev);
                 //System.out.println(">> "+prev);
                 right.remove(prev);
             }
             else {
                 if(left.keys.size() == T -1 && right.keys.size() == T -1){
-                    System.out.println(left.keys.get(0)+" "+right.keys.get(0));
-                    System.out.println("> case 3");
+                    //System.out.println(left.keys.get(0)+" "+right.keys.get(0));
+                    //System.out.println("> case 3");
                     keys.remove(x);
                     left.keys.add(left.getNewIndex(x),x);
                     for(int o : right.keys)
@@ -1922,7 +1960,7 @@ class BTree2 {
                     children.remove(right);
 
                     if(parent == null && keys.size() == 0){
-                        System.out.println("!");
+                        //System.out.println("!");
                         childrenLevelMinus();
                         if(children.size()== 1) {
                             BTree2 c = children.get(0);
@@ -1933,9 +1971,9 @@ class BTree2 {
                                 children.add(t);
                             }
 
-                            System.out.println("!dasdsadasdasdsad");
-                            getRoot().print2();
-                            System.out.println("dsadsadsa213123");
+                            //System.out.println("!dasdsadasdasdsad");
+                            //getRoot().print2();
+                            //System.out.println("dsadsadsa213123");
 
                             remove(x);
                             return;
@@ -1969,7 +2007,7 @@ class BTree2 {
     }
 
     private void removeCase1(Integer x){
-        System.out.println("remove case 1");
+        //System.out.println("remove case 1");
         BTree2 c1 = children.get(0);
         BTree2 c2 = children.get(1);
         children = new ArrayList<>();
@@ -1983,7 +2021,7 @@ class BTree2 {
     }
 
     private void removeCase2(Integer x){
-        System.out.println("remove case 2");
+        //System.out.println("remove case 2");
         //System.out.println(keys.size() + 1+" "+T);
 
         if(keys.size()> T - 1)
@@ -2005,12 +2043,12 @@ class BTree2 {
 
            //если такой сосед есть
            if(suitable!=null){
-               System.out.println("есть подходящий сосед");
+               //System.out.println("есть подходящий сосед");
                int k1 = 0;
                int k2 = 0;
 
                if(suitable == leftBrother) {
-                   System.out.println("левый");
+                   //System.out.println("левый");
                    k1 = suitable.keys.get(suitable.keys.size() - 1);
                    k2 = parent.keys.get(parent.children.indexOf(this)-1);
 
@@ -2022,10 +2060,10 @@ class BTree2 {
                }
 
 
-               System.out.println("k1 = "+k1+" k2 = "+k2);
-               for(int o : parent.keys)
-                   System.out.print(o+" ");
-               System.out.println();
+               //System.out.println("k1 = "+k1+" k2 = "+k2);
+               //for(int o : parent.keys)
+                //   System.out.print(o+" ");
+               //System.out.println();
 
                parent.keys.set(parent.keys.indexOf(k2),k1);
                //parent.keys.set(parent.getNewIndex(k1),k1);
@@ -2036,6 +2074,7 @@ class BTree2 {
            }
            //если нет
            else {
+               //System.out.println("нет");
                //System.out.println("нет такого");
                //System.out.println("!!!!");
                int k1 = 0;
@@ -2054,8 +2093,15 @@ class BTree2 {
 
                //System.out.println("k1 = "+k1);
                parent.keys.remove((Integer) k1);
+                   if(parent.keys.size() == 0){
+                       if(parent.children.size() == 1){
+                           parent.keys = keys;
+                           parent.children = new ArrayList<>();
+                       }
+                   }
                insert(k1);
            }
+
 
            keys.remove(x);
 
@@ -2068,10 +2114,10 @@ class BTree2 {
     }
 
     private void removeCase4() {
-        System.out.println("remove case 4");
-        for(Integer k : keys)
-            System.out.print(k+" ");
-        System.out.println();
+        //System.out.println("remove case 4");
+        //for(Integer k : keys)
+        //    System.out.print(k+" ");
+        //System.out.println();
 
         BTree2 lB = getLeftBrother();
         BTree2 rB = getRightBrother();
@@ -2083,11 +2129,11 @@ class BTree2 {
 
 
         //если хотя бы у одного брата из двух keys.size >= T
-        System.out.println(lB+ " "+rB);
+        //System.out.println(lB+ " "+rB);
         if(lB != null) {
-            System.out.println("!!");
-            System.out.println(" l s "+lB.keys.size());
-            System.out.println(lB.keys.get(0));
+            //System.out.println("!!");
+            //System.out.println(" l s "+lB.keys.size());
+            //System.out.println(lB.keys.get(0));
             if (lB.keys.size() >= T) {
 
                 int i = parent.getIndexInParentArray(this);
@@ -2096,11 +2142,11 @@ class BTree2 {
 
                 mid = parent.keys.get(i);
 
-                System.out.println(i);
+                //System.out.println(i);
 
-                System.out.println("!!! 1");
+                //System.out.println("!!! 1");
                 brotherX = lB.keys.get(lB.keys.size() - 1);
-                System.out.println(">> "+mid+" "+brotherX);
+                //System.out.println(">> "+mid+" "+brotherX);
 
                 parent.replace(mid,brotherX);
                 lB.keys.remove((Integer) brotherX);
@@ -2118,20 +2164,20 @@ class BTree2 {
         }
 
             if( rB != null){
-                System.out.println(" r s "+rB.keys.size());
-                System.out.println("!");
+                //System.out.println(" r s "+rB.keys.size());
+                //System.out.println("!");
                 if(rB.keys.size() >= T){
                     int i = parent.getIndexInParentArray(this);
                     //if(i != parent.keys.size() + 1)
                         //i--;
 
-                    System.out.println(i);
+                    //System.out.println(i);
 
                     mid = parent.keys.get(i);
-                    System.out.println("!!! 2");
+                    //System.out.println("!!! 2");
 
                     brotherX = rB.keys.get(0);
-                    System.out.println(">> "+mid+" "+brotherX);
+                    //System.out.println(">> "+mid+" "+brotherX);
                     //System.out.println(">> "+mid+" "+brotherX);
 
                     parent.replace(mid,brotherX);
@@ -2143,9 +2189,9 @@ class BTree2 {
                     rB.children.remove(newChild);
                     children.add(newChild);
 
-                    System.out.println("dasdasda!");
-                    getRoot().print2();
-                    System.out.println("das-das-ds-a");
+                    //System.out.println("dasdasda!");
+                    //getRoot().print2();
+                    //System.out.println("das-das-ds-a");
 
 
                     return;
@@ -2165,7 +2211,7 @@ class BTree2 {
 
                 mid = parent.keys.get(i);
             }
-            System.out.println("!!!!! 1 "+mid);
+            //System.out.println("!!!!! 1 "+mid);
             keys.add(getNewIndex(mid),mid);
 
             for(Integer o : lB.keys)
@@ -2180,9 +2226,9 @@ class BTree2 {
                 children.add(i, newChild);
             }
 
-            System.out.println("dasdasda!");
-            getRoot().print2();
-            System.out.println("das-das-ds-a");
+            //System.out.println("dasdasda!");
+            //getRoot().print2();
+            //System.out.println("das-das-ds-a");
 
         }else {
             if(rB != null && rB.keys.size() <= T -1){
@@ -2193,11 +2239,11 @@ class BTree2 {
                     //if(i != parent.keys.size() + 1)
                     //i--;
 
-                    System.out.println(i);
+                    //System.out.println(i);
 
                     mid = parent.keys.get(i);
                 }
-                System.out.println("!!!!! 2 "+mid);
+                //System.out.println("!!!!! 2 "+mid);
                 keys.add(getNewIndex(mid),mid);
 
                 for(Integer o : rB.keys)
@@ -2309,6 +2355,8 @@ class BTree2 {
     //проверка свойств B дерева
     public boolean propertiesCheck() {
         boolean check = propertiesCheck1();
+        if(!check)
+            Main.error++;
         return check;
     }
 
