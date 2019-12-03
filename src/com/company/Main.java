@@ -1,25 +1,23 @@
 package com.company;
 
-import javax.swing.text.AsyncBoxView;
-import java.awt.image.renderable.RenderableImage;
-import java.lang.management.ThreadInfo;
+
+
+import hashTables.*;
+
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.spi.AbstractResourceBundleProvider;
+
 //test2
 public class Main {
 
     public static void main(String[] args) {
+        //mySimpleHashTable table = new mySimpleHashTable(10);
+        //table.test(table);
+        //myHashTable.randomTest(table);
 
-        myHashTable table = new myHashTable();
-        table.add(11,"DASDSA");
-        table.add(10,"Dasdas");
-        table.add(666,"any");
-        table.add(16,"any 2");
-        table.add(432,"any 3");
-        table.printTable();
+        HashTableWithChain table = new HashTableWithChain(10);
+        myHashTable.randomTest(table);
+
     }
 
     static int error = 0;
@@ -98,7 +96,7 @@ public class Main {
 
         BTree2 tree = new BTree2(treeT);
 
-        int x[] = getRandomArray(arraySize,range);
+        int[] x = getRandomArray(arraySize, range);
         //for(int i : x)
         //    System.out.print(i+",");
         //System.out.println();
@@ -313,17 +311,11 @@ class Element{
         //printThis();
 
         if(leftChild!=null) {
-            if (leftChild.key < key)
-                checkResult = true;
-            else
-                checkResult = false;
+            checkResult = leftChild.key < key;
         }
 
         if(rightChild!=null) {
-            if (rightChild.key > key)
-                checkResult = true;
-            else
-                checkResult = false;
+            checkResult = rightChild.key > key;
         }
 
         //System.out.print(" this tree check:"+checkResult+"\n");
@@ -982,7 +974,7 @@ class RBTRee{
     //for debug
     public RBTRee(boolean canSetUncheck){
         if(canSetUncheck)
-            this.canSetUncheck = unCheck = true;
+            RBTRee.canSetUncheck = unCheck = true;
     }
 
     public RBTRee(int x){
@@ -2309,10 +2301,7 @@ class BTree2 {
     }
 
     private boolean isLeafOneLength(){
-        if(children.size() == 0 && keys.size() == 1)
-            return true;
-        else
-            return false;
+        return children.size() == 0 && keys.size() == 1;
     }
     //проверка свойств B дерева
     public boolean propertiesCheck() {
@@ -2437,10 +2426,7 @@ class BTree2 {
         if(children==null)
             return false;
         else {
-            if(keys.size()+1==children.size())
-                return true;
-            else
-                return false;
+            return keys.size() + 1 == children.size();
         }
 
     }
@@ -2452,10 +2438,7 @@ class BTree2 {
             System.out.println(o);
 
         print();*/
-        if(keys.size() == size)
-            return true;
-        else
-            return false;
+        return keys.size() == size;
     }
 
     //print methods
@@ -2532,53 +2515,3 @@ class BTree2 {
 
 }
 
-//hash tables
-class myHashTable{
-    private int size;
-    private int addedKeys;
-    private double loadFactory;
-    private int keys[];
-    private String  values[];
-
-
-    public myHashTable(){
-        size = 10;
-        ini();
-    }
-
-    public myHashTable(int initialSize){
-        size = initialSize;
-        ini();
-    }
-
-    public void printTable(){
-        System.out.println("table size = "+size+", load factor = "+loadFactory);
-        for(int i = 0 ; i < keys.length ; i++)
-            if(values[i] != null)
-                System.out.println(keys[i]+" \""+values[i]+"\"");
-    }
-
-    public void add(int key, String value){
-        int hash = getHash(key);
-
-        if(values[hash] == null) {
-            addedKeys++;
-            loadFactory = 1.0 / ((double)size / (double)addedKeys);
-        }
-
-        //System.out.println(hash);
-        keys[hash] = key;
-        values[hash] = value;
-
-    }
-
-    private void ini(){
-        keys = new int[size];
-        values = new String[size];
-    }
-
-    private int getHash(int key){
-        return  key % size;
-    }
-
-}
