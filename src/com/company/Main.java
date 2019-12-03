@@ -10,55 +10,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.spi.AbstractResourceBundleProvider;
 //test2
 public class Main {
+
+    public static void main(String[] args) {
+
+        myHashTable table = new myHashTable();
+        table.add(11,"DASDSA");
+        table.add(10,"Dasdas");
+        table.add(666,"any");
+        table.add(16,"any 2");
+        table.add(432,"any 3");
+        table.printTable();
+    }
+
     static int error = 0;
     static CountDownLatch l = new CountDownLatch(Runtime.getRuntime().availableProcessors());
-    public static void main(String[] args) {
-        //test sets
-        //1
-        // x {23,18,51,83,75,57,9,79,87,71,22,30,27,11,21,28,37,63,14,92}
-        // xS {63,71,11,9,57,21,14,37,22,23,92,75,30,79,27,51,87,83,28,18}
-        //2
-        //int x[] = {84,8,39,28,85,27,67,12,75,3,95,72,51,59,29,37,94,79,77,52};
-        //int s[] = {72,75,77,85,29,28,51,52,37,8,12,94,95,3,27,39,84,67,59,79};
-        //3
-        //int x[] ={37,94,1,5,56,99,87,6,59,98,85,68,82,53,39,46,41,92,9,16,};
-        //int s[] ={37,87,99,39,46,1,41,59,85,9,53,16,6,92,56,82,94,98,68,5,};
-        //4
-        //int x[] = {44,100,20,64,6,29,2,52,18,42,94,22,32,41,30,54,23,15,61,34};
-        //int s[] = {2,42,54,100,15,6,34,64,41,94,29,30,18,23,61,44,52,22,20,32};
-        //5
-        //int x[] = {97,61,92,74,54,5,62,4,43,90,89,76,19,98,87,37,82,73,1,2};
-        //int s[] = {4,92,1,5,98,2,76,74,87,54,89,97,82,19,90,61,62,73,37,43};
-        //6
-        //int x[] = {19,93,85,76,21,63,18,55,82,29,45,48,100,37,81,98,13,92,68,67};
-        //int s[] = {13,81,48,93,55,19,98,18,68,76,67,21,92,82,100,45,29,85,63,37};
-        //7
-        //int x[] = {56,39,95,90,31,53,91,45,80,82,72,6,17,70,20,33,28,69,74,47};
-        //int s[] = {80,91,56,45,33,90,17,74,28,95,20,72,53,70,31,39,69,6,47,82};
-        //8
-        //int x[] = {5,24,15,71,85,76,48,73,45,65,53,67,99,35,49,10,89,83,97,79};
-        //int s[] = {97,76,24,49,53,45,99,73,48,83,67,85,79,15,65,10,35,71,5,89};
-        //9
-        //int x[] = {90,57,82,66,78,70,72,48,28,69,56,41,13,2,23,77,43,27,61,95};
-        //int s[] = {90,48,77,82,23,66,57,28,2,95,61,27,41,56,13,70,69,78,43,72};
-        //10
-        //int x[] = {73,11,58,83,10,98,97,62,77,16,23,93,43,4,32,34,2,95,53,70};
-        //int s[] = {4,11,2,32,23,70,98,10,83,73,16,95,58,97,43,93,34,53,62,77};
-
-        /*ArrayList<Integer> s2 = new ArrayList<>();
-        for(int l : s)
-            s2.add(l);
-        BTree2 t = new BTree2(2);
-        t.add(x);
-        t.print();
-        System.out.println();
-        t.print2();
-
-        System.out.println(t.propertiesCheck());
-
-        t.remove(s2);*/
-
-
+    public static void BTreeTest(){
 
         class testThread extends Thread{
             @Override
@@ -92,11 +58,7 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("Количество ошибок "+error);
-
-
     }
-
-
     public static int[] getRandomArray(int size,int d) {
             //random array without repeats
             if(d<size)
@@ -2567,5 +2529,56 @@ class BTree2 {
 
     }
 
+
+}
+
+//hash tables
+class myHashTable{
+    private int size;
+    private int addedKeys;
+    private double loadFactory;
+    private int keys[];
+    private String  values[];
+
+
+    public myHashTable(){
+        size = 10;
+        ini();
+    }
+
+    public myHashTable(int initialSize){
+        size = initialSize;
+        ini();
+    }
+
+    public void printTable(){
+        System.out.println("table size = "+size+", load factor = "+loadFactory);
+        for(int i = 0 ; i < keys.length ; i++)
+            if(values[i] != null)
+                System.out.println(keys[i]+" \""+values[i]+"\"");
+    }
+
+    public void add(int key, String value){
+        int hash = getHash(key);
+
+        if(values[hash] == null) {
+            addedKeys++;
+            loadFactory = 1.0 / ((double)size / (double)addedKeys);
+        }
+
+        //System.out.println(hash);
+        keys[hash] = key;
+        values[hash] = value;
+
+    }
+
+    private void ini(){
+        keys = new int[size];
+        values = new String[size];
+    }
+
+    private int getHash(int key){
+        return  key % size;
+    }
 
 }
