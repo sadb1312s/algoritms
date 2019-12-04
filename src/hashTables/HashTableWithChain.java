@@ -1,6 +1,9 @@
 package hashTables;
 
+import com.company.Main;
+
 import java.util.LinkedList;
+import java.util.Random;
 
 public class HashTableWithChain extends myHashTable {
 
@@ -40,21 +43,34 @@ public class HashTableWithChain extends myHashTable {
             int hash = getHash(key);
             if(table[hash] == null) {
                 added++;
-                loadFactor =  1.0 /((double)size / (double) added);
+                loadFactor = getLoadFactor();
                 table[hash] = new LinkedList<>();
 
+                if(loadFactor >= 0.75) {
+                        resize();
+                        return add(key,value);
+
+                }
             }
 
             //проверить есть ли такой ключ
             boolean is = false;
+
             for(int i = 0; i < table[hash].size(); i++)
                 if(table[hash].get(i).key == key) {
                     is = true;
+                    reWriteCount++;
                     table[hash].get(i).value = value;
+                    //System.out.println("reWRITE!!! "+key);
+                    break;
+
                 }
 
-            if(!is)
-                table[hash].add(new Node(key,value));
+            if(!is) {
+                table[hash].add(new Node(key, value));
+                elementCount++;
+                //System.out.println("add "+key);
+            }
 
             return true;
         }catch (Exception e){
@@ -65,41 +81,110 @@ public class HashTableWithChain extends myHashTable {
 
     }
 
-    @Override
-    public boolean remove(int key) {
-        return false;
+
+    private double getLoadFactor(){
+        return  1.0 /((double)size / (double) added);
     }
 
     @Override
-    public String find(int key) {
+    public boolean remove(int key) {
+        Node o = findObject(key);
+
+
+        int hash = getHash(key);
+        if(o != null){
+            table[hash].remove(o);
+            if(table[hash].size() == 0)
+                table[hash] = null;
+
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public Node findObject(int key){
         int hash = getHash(key);
         if(table[hash] != null)
             for(int i = 0 ; i < table[hash].size(); i++){
-                if(table[hash].get(i).key == key)
-                    return table[hash].get(i).value;
+                if(table[hash].get(i).key == key) {
+                    System.out.println(table[hash].get(i));
+                    return table[hash].get(i);
+                }
             }
 
         return null;
     }
 
     @Override
+    public String find(int key) {
+        Node o = findObject(key);
+
+        if(o != null)
+            return o.value;
+        else
+            return null;
+    }
+
+    @Override
     protected void resize() {
 
+        size = (int)((float)size * 1.5);
+
+        LinkedList<Node>[] temp = table.clone();
+        table = new LinkedList[size];
+        loadFactor = added = elementCount  = 0;
+
+
+        for(int i = 0; i<temp.length; i++){
+            if(temp[i] != null){
+                for(int j=0; j<temp[i].size(); j++){
+                    add(temp[i].get(j).key,temp[i].get(j).value);
+                }
+            }
+        }
+
+        loadFactor = getLoadFactor();
     }
 
     @Override
     public void printTable() {
-        System.out.println("size = "+size +" loadFactor = "+loadFactor+" added "+added);
+        System.out.println("size = "+size +" loadFactor = "+loadFactor+" elementCount = "+elementCount+" rewriteCount = "+reWriteCount);
 
         for(int i = 0; i < size; i++)
             if (table[i] != null) {
                 System.out.print("hash = "+i+" ");
                 for (int j = 0; j < table[i].size(); j++)
-                    System.out.print("( "+table[i].get(j).key + " " + table[i].get(j).value+" )");
+                    System.out.print("( "+table[i].get(j).key + " \"" + table[i].get(j).value+"\" )");
                 System.out.println();
             }
 
 
 
     }
+
+    public static void randomTest(int testCount){
+        Random r = new Random();
+        int errorCount =0;
+
+        HashTableWithChain table;
+
+        for(int i = 0; i<testCount; i++){
+            if(i%10 == 0)
+                System.out.println("test "+i+" start");
+
+            table = new HashTableWithChain();
+
+            int s = r.nextInt(1_000_000);
+            int d = r.nextInt(1_000_000);
+
+            if(!myHashTable.randomSingleTest(table,s,d))
+                errorCount++;
+
+
+        }
+        System.out.println("testCount = "+testCount+" errrorCount = "+errorCount);
+    }
+
 }

@@ -11,12 +11,15 @@ import java.util.concurrent.CountDownLatch;
 public class Main {
 
     public static void main(String[] args) {
-        //mySimpleHashTable table = new mySimpleHashTable(10);
-        //table.test(table);
-        //myHashTable.randomTest(table);
+        HashTableWithChain table = new HashTableWithChain();
+        table.add(213,"one");
+        table.add(21321,"two");
+        table.add(77,"three");
+        table.add(1,"four");
+        table.add(87,"five");
 
-        HashTableWithChain table = new HashTableWithChain(10);
-        myHashTable.randomTest(table);
+        table.printTable();
+
 
     }
 
