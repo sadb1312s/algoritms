@@ -17,11 +17,6 @@ public abstract class myHashTable  {
     protected abstract void resize();
     public abstract void printTable();
 
-
-
-
-
-
     public static <T extends myHashTable> boolean randomSingleTest(T t,int testArraySize,int bound){
 
         int[] testArray = getRandomArrayWithRepeat(testArraySize,bound);
@@ -73,6 +68,28 @@ public abstract class myHashTable  {
         System.out.println();
     }
 
+    public static void randomTest(int testCount){
+        Random r = new Random();
+        int errorCount =0;
+
+        HashTableWithChain table;
+
+        for(int i = 0; i<testCount; i++){
+            if(i%10 == 0)
+                System.out.println("test "+i+" start");
+
+            table = new HashTableWithChain();
+
+            int s = r.nextInt(1_000_000);
+            int d = r.nextInt(1_000_000);
+
+            if(!myHashTable.randomSingleTest(table,s,d))
+                errorCount++;
+
+
+        }
+        //System.out.println("testCount = "+testCount+" errrorCount = "+errorCount);
+    }
 }
 
 

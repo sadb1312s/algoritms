@@ -11,15 +11,9 @@ import java.util.concurrent.CountDownLatch;
 public class Main {
 
     public static void main(String[] args) {
-        HashTableWithChain table = new HashTableWithChain();
-        table.add(213,"one");
-        table.add(21321,"two");
-        table.add(77,"three");
-        table.add(1,"four");
-        table.add(87,"five");
 
-        table.printTable();
-
+        //new Test<mySimpleHashTable>().randomTest(500);
+        HashTableWithChain.randomTest(500);
 
     }
 

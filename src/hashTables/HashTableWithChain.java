@@ -81,7 +81,6 @@ public class HashTableWithChain extends myHashTable {
 
     }
 
-
     private double getLoadFactor(){
         return  1.0 /((double)size / (double) added);
     }
@@ -163,28 +162,4 @@ public class HashTableWithChain extends myHashTable {
 
 
     }
-
-    public static void randomTest(int testCount){
-        Random r = new Random();
-        int errorCount =0;
-
-        HashTableWithChain table;
-
-        for(int i = 0; i<testCount; i++){
-            if(i%10 == 0)
-                System.out.println("test "+i+" start");
-
-            table = new HashTableWithChain();
-
-            int s = r.nextInt(1_000_000);
-            int d = r.nextInt(1_000_000);
-
-            if(!myHashTable.randomSingleTest(table,s,d))
-                errorCount++;
-
-
-        }
-        System.out.println("testCount = "+testCount+" errrorCount = "+errorCount);
-    }
-
 }
