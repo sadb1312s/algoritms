@@ -86,6 +86,14 @@ public class HashTableWithChain extends myHashTable {
     }
 
     @Override
+    public void clearAll() {
+        size  = 10;
+        added = elementCount = reWriteCount = 0;
+        loadFactor = 0;
+        table = new LinkedList[size];
+    }
+
+    @Override
     public boolean remove(int key) {
         Node o = findObject(key);
 
@@ -108,7 +116,7 @@ public class HashTableWithChain extends myHashTable {
         if(table[hash] != null)
             for(int i = 0 ; i < table[hash].size(); i++){
                 if(table[hash].get(i).key == key) {
-                    System.out.println(table[hash].get(i));
+                    //System.out.println(table[hash].get(i));
                     return table[hash].get(i);
                 }
             }

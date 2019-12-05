@@ -16,35 +16,35 @@ public abstract class myHashTable  {
     public abstract String find(int key);
     protected abstract void resize();
     public abstract void printTable();
+    public abstract void clearAll();
 
-    public static <T extends myHashTable> boolean randomSingleTest(T t,int testArraySize,int bound){
-
+    private boolean randomSingleTest(int testArraySize,int bound){
         int[] testArray = getRandomArrayWithRepeat(testArraySize,bound);
 
         //if(testArraySize < 50)
             //printArray(testArray);
 
         for(int o : testArray){
-            t.add(o,"anything "+o);
+            add(o,"anything "+o);
         }
-
 
         //test 1
         int errorCount = 0;
 
-        if(testArray.length != t.elementCount + t.reWriteCount)
+        if(testArray.length != elementCount + reWriteCount)
             errorCount++;
 
         //test 2
 
         for(int o : testArray)
-            if(!t.find(o).equals("anything "+o))
+            if(!find(o).equals("anything "+o))
                 errorCount++;
 
-        if(errorCount == 0)
+        if(errorCount == 0) {
             return true;
+        }
         else {
-            System.out.println("error");
+            //System.out.println("error");
             return false;
         }
     }
@@ -68,28 +68,49 @@ public abstract class myHashTable  {
         System.out.println();
     }
 
-    public static void randomTest(int testCount){
+    public void randomTest(){
+        randomTest(1);
+    }
+
+    public void randomTest(int testArraySize, int bound){
+        randomSingleTest(testArraySize,bound);
+    }
+
+    public void randomTest(int testCount){
         Random r = new Random();
         int errorCount =0;
 
-        HashTableWithChain table;
+        myHashTable table = null;
 
+        long midS = 0;
+        long midB = 0;
+
+        Long start = System.currentTimeMillis();
         for(int i = 0; i<testCount; i++){
             if(i%10 == 0)
                 System.out.println("test "+i+" start");
 
-            table = new HashTableWithChain();
+
 
             int s = r.nextInt(1_000_000);
             int d = r.nextInt(1_000_000);
 
-            if(!myHashTable.randomSingleTest(table,s,d))
+            midS += s;
+            midB += d;
+
+            if(!randomSingleTest(s,d))
                 errorCount++;
 
-
+            clearAll();
         }
-        //System.out.println("testCount = "+testCount+" errrorCount = "+errorCount);
+        Long finish = System.currentTimeMillis();
+        System.out.println("test time = "+(finish - start)+" ms");
+        System.out.println("testCount = "+testCount+" errrorCount = "+errorCount);
+        System.out.println("midSize = "+midS/testCount+" midBound = "+midB/testCount);
     }
+
+
+
 }
 
 

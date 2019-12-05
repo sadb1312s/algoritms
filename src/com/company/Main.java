@@ -12,8 +12,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //new Test<mySimpleHashTable>().randomTest(500);
-        HashTableWithChain.randomTest(500);
+        new HashTableWithChain().randomTest(10);
+        new mySimpleHashTable().randomTest(10);
 
     }
 

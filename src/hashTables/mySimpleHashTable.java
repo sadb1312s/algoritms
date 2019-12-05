@@ -68,4 +68,11 @@ public class mySimpleHashTable extends myHashTable {
             if(values[i] != null)
                 System.out.println(keys[i]+" \""+values[i]+"\"");
     }
+
+
+    @Override
+    public void clearAll() {
+        keys = new int[10];
+        values = new String[10];
+    }
 }
