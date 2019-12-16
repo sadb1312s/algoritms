@@ -2,6 +2,7 @@ package com.company;
 
 
 
+import Graphs.mySimpleGraph;
 import hashTables.*;
 
 import java.util.*;
@@ -12,8 +13,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        new HashTableWithChain().randomTest(10);
-        new mySimpleHashTable().randomTest(10);
+        mySimpleGraph g = new mySimpleGraph();
+
+        int[][] matrix = {{1,0,1,0,1},{1,0,1,0,1},{1,0,1,0,1},{1,0,1,0,1},{1,0,1,0,1}};
+        g.setMatrix(matrix);
+
 
     }
 
