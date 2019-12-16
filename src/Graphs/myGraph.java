@@ -3,17 +3,15 @@ package Graphs;
 public abstract class myGraph {
     protected boolean isOriented = false;
     protected boolean withWeight = false;
-    protected int initialSize = 5;
     protected int size = 0;
 
-    public myGraph(){
-        size = initialSize;
-    }
-
-    public myGraph(int iniciialSize, boolean isOriented, boolean withWeight){
-        this.size = iniciialSize;
+    public myGraph(boolean isOriented, boolean withWeight){
         this.isOriented = isOriented;
         this.withWeight = withWeight;
+    }
+
+    public myGraph() {
+
     }
 
     public abstract void addPoint();

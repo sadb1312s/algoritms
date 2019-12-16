@@ -13,10 +13,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        mySimpleGraph g = new mySimpleGraph();
-
-        int[][] matrix = {{1,0,1,0,1},{1,0,1,0,1},{1,0,1,0,1},{1,0,1,0,1},{1,0,1,0,1}};
-        g.setMatrix(matrix);
+        mySimpleGraph g = new mySimpleGraph(false,false,5);
+        g.printInfo();
 
 
     }
