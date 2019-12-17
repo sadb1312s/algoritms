@@ -137,6 +137,10 @@ class Matrix {
             matrix.get(point1).set(point2,weight);
     }
 
+    protected int get(int point1, int point2){
+        return matrix.get(point1).get(point2);
+    }
+
 
 
 

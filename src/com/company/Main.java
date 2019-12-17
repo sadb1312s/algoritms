@@ -13,8 +13,20 @@ public class Main {
 
     public static void main(String[] args) {
 
-        mySimpleGraph g = new mySimpleGraph(false,false,5);
+        mySimpleGraph g = new mySimpleGraph(true,true,7);
+        g.addWay(0,1,7);
+        g.addWay(0,6,1);
+        g.addWay(1,2,9);
+        g.addWay(1,3,2);
+        g.addWay(2,4,2);
+        g.addWay(2,5,1);
+        g.addWay(4,6,6);
+        g.addWay(5,6,9);
+
+        g.addWay(3,0);
         g.printInfo();
+        g.getShortestWay(0,6,true);
+
 
 
     }

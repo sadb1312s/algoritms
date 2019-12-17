@@ -1,5 +1,7 @@
 package Graphs;
 
+import java.util.ArrayList;
+
 public abstract class myGraph {
     protected boolean isOriented = false;
     protected boolean withWeight = false;
@@ -16,6 +18,6 @@ public abstract class myGraph {
 
     public abstract void addPoint();
     public abstract void addWay(int point1,int point2);
-    public abstract void getWays(int point1,int point2);
-    public abstract void getShortestWay(int point1,int point2);
+    public abstract ArrayList<ArrayList<Integer>> getWays(int point1, int point2,boolean printWay);
+    public abstract ArrayList<Integer> getShortestWay(int point1,int point2,boolean printWay);
 }
