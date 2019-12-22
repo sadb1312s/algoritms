@@ -31,6 +31,7 @@ public class mySimpleGraph extends myGraph {
             }
     }
 
+
     public void setMatrix(int[][] inputMatrix){
         if(inputMatrix.length > size)
             size = inputMatrix.length;
@@ -196,14 +197,14 @@ public class mySimpleGraph extends myGraph {
         return null;
     }
 
-   private ArrayList<ArrayList<Integer>> clearRepeatWay(ArrayList<ArrayList<Integer>> ways){
+    private ArrayList<ArrayList<Integer>> clearRepeatWay(ArrayList<ArrayList<Integer>> ways){
         //remove cycle ways, part of cycle way
        //...
 
        return ways;
    }
 
-   private void printWays(ArrayList<ArrayList<Integer>> ways){
+    private void printWays(ArrayList<ArrayList<Integer>> ways){
        for(ArrayList<Integer> o : ways) {
            for (int k : o)
                System.out.print(k + " -> ");
@@ -211,11 +212,109 @@ public class mySimpleGraph extends myGraph {
        }
    }
 
-   private void printWays(ArrayList<ArrayList<Integer>> ways,int sum[]){
+    private void printWays(ArrayList<ArrayList<Integer>> ways,int sum[]){
         for(int i = 0; i < ways.size(); i++) {
             for (int k : ways.get(i))
                 System.out.print(k + " -> ");
             System.out.println(" : "+sum[i]);
         }
     }
+
+    boolean[] were;
+    int[] mark;
+    boolean noWay = false;
+    public void Dijkstra(int startPoint, int finishPoint){
+        boolean thisIsStart = false;
+        //System.out.println("start = "+startPoint);
+
+        if(were == null && mark == null) {
+            were = new boolean[matrix.size()];
+            mark = new int[matrix.size()];
+            thisIsStart = true;
+        }
+
+        for(int i = 0; i < matrix.size(); i++){
+            int currentWay = matrix.get(startPoint,i);
+            if(currentWay != 0 && (mark[i] > mark[startPoint]+currentWay || mark[i] == 0) && !were[i]) { //& i != startPoint
+                mark[i] = mark[startPoint] + currentWay;
+            }
+
+            if(i == matrix.size() - 1)
+                were[startPoint] = true;
+        }
+
+
+        /*for(int o : mark)
+            System.out.println("> "+o);
+        for(boolean o: were)
+            System.out.println("> "+o);*/
+
+
+        Integer nextIndex = DijkstraGetMin(startPoint,finishPoint);
+        if(nextIndex == null){
+            noWay = true;
+        }else {
+            Dijkstra(nextIndex,finishPoint);
+            if(noWay) {
+                //System.out.println("no way next " + nextIndex + " this " + startPoint);
+                Dijkstra(startPoint,finishPoint);
+
+            }
+        }
+
+
+        if(thisIsStart){
+            //System.out.println("end "+startPoint);
+            //get Way
+            System.out.println("> "+finishPoint);
+            DijkstraAnalise(startPoint,finishPoint);
+        }
+
+    }
+
+    private Integer DijkstraGetMin(int startPoint,int finishPoint){
+        int nextIndex = 0; // min
+
+
+        for(int i = 0; i < mark.length; i++) {
+
+            if(matrix.get(startPoint,i) != 0) {
+                int o = mark[i];
+
+                if (o != 0 && !were[i]) {
+                    if (nextIndex == 0)
+                        nextIndex = i;
+                    else if (o < mark[nextIndex])
+                        nextIndex = i;
+
+
+                }
+            }
+
+        }
+
+        //System.out.println("next min = "+mark[nextIndex]+" "+nextIndex+" "+startPoint);
+
+        if(nextIndex == 0) {
+            return null;
+        }
+        else
+            return nextIndex;
+    }
+
+    private void DijkstraAnalise(int startPoint, int finishPoint){
+
+        for(int i = 0; i < matrix.size(); i++){
+            if(matrix.get(finishPoint,i) != 0 || matrix.get(i,finishPoint) != 0){
+                if(mark[finishPoint] - matrix.get(i,finishPoint) == mark[i]) {
+                    System.out.println("> "+i);
+                    DijkstraAnalise(startPoint,i);
+                    break;
+                }
+
+
+            }
+        }
+    }
+
 }

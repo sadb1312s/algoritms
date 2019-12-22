@@ -15,17 +15,30 @@ public class Main {
 
         mySimpleGraph g = new mySimpleGraph(true,true,7);
         g.addWay(0,1,7);
-        g.addWay(0,6,1);
+        g.addWay(0,6,100);
         g.addWay(1,2,9);
         g.addWay(1,3,2);
         g.addWay(2,4,2);
-        g.addWay(2,5,1);
+        g.addWay(2,5,3);
         g.addWay(4,6,6);
         g.addWay(5,6,9);
+        g.addWay(3,6,1);
 
         g.addWay(3,0);
         g.printInfo();
         g.getShortestWay(0,6,true);
+        g.Dijkstra(0,6);
+        /*mySimpleGraph g = new mySimpleGraph(false,true,6);
+        g.addWay(0,5,14);
+        g.addWay(0,1,7);
+        g.addWay(0,2,9);
+        g.addWay(5,2,2);
+        g.addWay(5,4,9);
+        g.addWay(1,2,10);
+        g.addWay(1,3,15);
+        g.addWay(3,2,11);
+        g.addWay(3,4,6);
+        g.Dijkstra(0,4);*/
 
 
 
