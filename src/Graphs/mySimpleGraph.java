@@ -317,4 +317,106 @@ public class mySimpleGraph extends myGraph {
         }
     }
 
+    //минимальное останове дерево
+    public void Kraskal() {
+        Matrix m = new Matrix(new int[matrix.size()][matrix.size()], false, matrix.withWeight);
+        //перебираем ребрка ищем минимальное
+        ArrayList<Edge> edges = getEdge();
+
+        /*System.out.println("edges");
+        for(Edge o : edges)
+            System.out.println(o.i+" "+o.j+" : "+o.weight);*/
+
+        Edge min = edges.get(0);
+        int count = edges.size() - 1;
+        ArrayList<ArrayList<Integer>> col = new ArrayList<>();
+
+        while (count >=0) {
+            min = new Edge(0,0,0);
+            for (Edge o : edges) {
+                if (!o.were) {
+                    if (o.weight < min.weight || min.weight == 0) {
+                        min = o;
+                    }
+                }
+            }
+            min.were = true;
+            count--;
+
+            System.out.println(min.i+" "+min.j+" : "+min.weight);
+            if(col.size() == 0){
+                col.add(new ArrayList<>());
+                col.get(0).add(min.i);
+                col.get(0).add(min.j);
+                m.set(min.i,min.j,min.weight);
+            }else {
+
+                for(ArrayList<Integer> o : col) {
+                    for (Integer x : o)
+                        System.out.print(x + " ");
+                    System.out.println();
+                }
+                System.out.println("------------");
+
+                for(ArrayList<Integer> o : col)
+                    if(!o.contains(min.i) && !o.contains(min.j)){
+
+                    }else {
+                        System.out.println("!");
+                        if(o.contains(min.i) && !o.contains(min.j))
+                            o.add(min.j);
+                        if(!o.contains(min.i) && o.contains(min.j))
+                            o.add(min.i);
+
+
+                    }
+
+            }
+
+            /*System.out.println("----");
+            for(ArrayList<Integer> o : col) {
+                for (Integer x : o)
+                    System.out.print(x + " ");
+                System.out.println();
+            }
+            System.out.println("----");*/
+
+        }
+
+
+
+
+
+    }
+
+    private ArrayList<Edge> getEdge(){
+        ArrayList<Edge> edges = new ArrayList<>();
+        for(int i = 0; i < matrix.size(); i++)
+            for (int j = i; j < matrix.size(); j++)
+                if(matrix.get(i,j) != 0)
+                    edges.add(new Edge(i,j,matrix.get(i,j)));
+
+        System.out.println(edges.size());
+
+        return edges;
+    }
+
+    /*private ArrayList<Edge> sortEdges(){
+        //sorting.... quick sort?....
+        return null;
+    }*/
+
+    class Edge{
+        int i;
+        int j;
+        int weight;
+        boolean were = false;
+
+        public Edge(int i, int j, int weight) {
+            this.i = i;
+            this.j = j;
+            this.weight = weight;
+        }
+    }
+
 }

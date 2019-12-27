@@ -3,7 +3,7 @@ package Graphs;
 import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 
-class Matrix {
+class Matrix{
     protected boolean withWeight = false;
     protected boolean isOriented = false;
     ArrayList<ArrayList<Integer>> matrix;
@@ -141,6 +141,16 @@ class Matrix {
         return matrix.get(point1).get(point2);
     }
 
+    protected int findMax(){
+        int max = 0;
 
+        for(int i = 0; i < matrix.size(); i++)
+            for(int j = 0; j < matrix.size(); j++)
+                if(matrix.get(i).get(j) > max)
+                    max = matrix.get(i).get(j);
+
+
+        return max;
+    }
 
 }
