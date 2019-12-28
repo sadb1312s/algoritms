@@ -13,16 +13,29 @@ public class Main {
 
     public static void main(String[] args) {
 
-        mySimpleGraph g = new mySimpleGraph(false,true,7);
-        g.addWay(0,1,7);
-        g.addWay(0,6,100);
-        g.addWay(1,2,9);
-        g.addWay(1,3,2);
-        g.addWay(2,4,2);
-        g.addWay(2,5,3);
-        g.addWay(4,6,6);
-        g.addWay(5,6,9);
-        g.addWay(3,6,1);
+        mySimpleGraph g = new mySimpleGraph(false,true,10);
+        g.addWay(0,1,6);
+        g.addWay(0,3,3);
+        g.addWay(0,6,9);
+        g.addWay(1,2,2);
+        g.addWay(1,3,4);
+        g.addWay(1,4,9);
+        g.addWay(2,3,2);
+        g.addWay(2,4,9);
+        g.addWay(2,5,8);
+        g.addWay(3,5,9);
+        g.addWay(3,6,9);
+        g.addWay(4,7,4);
+        g.addWay(4,8,5);
+        g.addWay(4,5,7);
+        g.addWay(5,6,4);//8
+        g.addWay(5,8,9);
+        g.addWay(5,9,10);
+        g.addWay(6,9,18);
+        g.addWay(7,8,1);
+        g.addWay(7,9,4);
+        g.addWay(8,9,3);
+
 
         //g.addWay(3,0);
         g.printInfo();

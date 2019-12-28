@@ -31,11 +31,23 @@ class Matrix{
     boolean GCheck = true;
 
     protected void printMatrix(){
+
+        System.out.print("  | ");
+        for(int i = 0; i < matrix.size(); i++)
+            System.out.print(i+" ");
+        System.out.println();
+        for(int i = 0; i < matrix.size()+2; i++)
+            System.out.print("--");
+        System.out.println();
+
+        int j = 0;
         if(matrix != null)
             for(ArrayList<Integer> o : matrix) {
+                System.out.print(j+" | ");
                 for (int x : o)
                     System.out.print(x+" ");
                 System.out.println();
+                j++;
             }
     }
 

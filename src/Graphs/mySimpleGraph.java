@@ -332,6 +332,7 @@ public class mySimpleGraph extends myGraph {
         ArrayList<ArrayList<Integer>> col = new ArrayList<>();
 
         while (count >=0) {
+            boolean findPlace = false;
             min = new Edge(0,0,0);
             for (Edge o : edges) {
                 if (!o.were) {
@@ -343,45 +344,72 @@ public class mySimpleGraph extends myGraph {
             min.were = true;
             count--;
 
-            System.out.println(min.i+" "+min.j+" : "+min.weight);
-            if(col.size() == 0){
-                col.add(new ArrayList<>());
-                col.get(0).add(min.i);
-                col.get(0).add(min.j);
-                m.set(min.i,min.j,min.weight);
-            }else {
+            System.out.println("min = "+min.i+" "+min.j+" : "+min.weight);
 
-                for(ArrayList<Integer> o : col) {
-                    for (Integer x : o)
-                        System.out.print(x + " ");
-                    System.out.println();
-                }
-                System.out.println("------------");
+            //проверить на объединение
+            ArrayList<Integer> combineIndex = new ArrayList<>();
 
-                for(ArrayList<Integer> o : col)
-                    if(!o.contains(min.i) && !o.contains(min.j)){
-
-                    }else {
-                        System.out.println("!");
-                        if(o.contains(min.i) && !o.contains(min.j))
-                            o.add(min.j);
-                        if(!o.contains(min.i) && o.contains(min.j))
-                            o.add(min.i);
-
-
-                    }
-
+            for(int i = 0; i < col.size(); i++){
+                if(col.get(i).contains(min.i) || col.get(i).contains(min.j))
+                    combineIndex.add(i);
             }
 
-            /*System.out.println("----");
+            System.out.println("combineSize = "+combineIndex.size());
+            if(combineIndex.size() == 2){
+                System.out.println("need combine");
+                col.get(combineIndex.get(0)).addAll(col.get(combineIndex.get(1)));
+                col.remove((int)combineIndex.get(1));
+                m.set(min.i,min.j,min.weight);
+                m.set(min.j,min.i,min.weight);
+            }
+
+
+            //ищем куда вставить
+            System.out.println("col size "+col.size());
+            for(ArrayList<Integer> o : col)
+                if(!o.contains(min.i) && !o.contains(min.j)){
+                    System.out.println("case 1");
+                }else {
+                    if(o.contains(min.i) && !o.contains(min.j)) {
+                        System.out.println("case 2.1");
+                        o.add(min.j);
+                        m.set(min.i,min.j,min.weight);
+                        m.set(min.j,min.i,min.weight);
+                    }
+                    if(!o.contains(min.i) && o.contains(min.j)) {
+                        System.out.println("case 2.2");
+                        o.add(min.i);
+                        m.set(min.i,min.j,min.weight);
+                        m.set(min.j,min.i,min.weight);
+                    }
+                    findPlace = true;
+
+
+                }
+
+            if(!findPlace) {
+                System.out.println("не нашли куда вставить");
+                col.add(new ArrayList<>());
+                col.get(col.size() - 1).add(min.i);
+                col.get(col.size() - 1).add(min.j);
+                m.set(min.i,min.j,min.weight);
+                m.set(min.j,min.i,min.weight);
+            }
+
+
+
+
+            //m.printMatrix();
             for(ArrayList<Integer> o : col) {
                 for (Integer x : o)
                     System.out.print(x + " ");
                 System.out.println();
             }
-            System.out.println("----");*/
+            System.out.println("------------");
 
         }
+        System.out.println("end");
+        m.printMatrix();
 
 
 
